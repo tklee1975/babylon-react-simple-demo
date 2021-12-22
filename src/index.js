@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ArcRotateCamera, Vector3, SceneLoader, HemisphericLight, MeshBuilder } from "@babylonjs/core";
+import { ArcRotateCamera, Vector3, SceneLoader, HemisphericLight,
+  Texture, MeshBuilder, StandardMaterial, Color3 } from "@babylonjs/core";
 import { GLTFFileLoader } from "@babylonjs/loaders";
 
 import './index.css';
@@ -12,7 +13,26 @@ import SceneComponent from './SceneComponent.jsx';
 
 let box;
 const createBoxModel = (scene) => {
-  return MeshBuilder.CreateBox("box", { size: 2 }, scene);
+  let mesh = MeshBuilder.CreateBox("box", { size: 2 }, scene);
+  mesh.scaling = Vector3.One().scale(0.1);
+  let mat = createMaterial();
+  mesh.material = mat;
+
+  return mesh;
+};
+
+const createMaterial = (scene) => {
+  let myMaterial = new StandardMaterial("myMaterial", scene);
+
+  myMaterial.diffuseColor = new Color3(1, 1, 1);
+  //myMaterial.specularColor = new Color3(0.5, 0.6, 0.87);
+  myMaterial.emissiveColor = new Color3(1, 1, 1);
+  //myMaterial.ambientColor = new Color3(0.23, 0.98, 0.53);
+  //myMaterial.diffuseTexture = new Texture("https://www.babylonjs-playground.com/textures/co.png", scene);
+  myMaterial.diffuseTexture = new Texture("simple_box_texture_2.png", scene);
+  //myMaterial.diffuseTexture = new Texture("https://www.babylonjs-playground.com/textures/co.png", scene);
+  
+  return myMaterial;
 };
 
 const createSpecialModel = async (scene) => {
@@ -21,6 +41,8 @@ const createSpecialModel = async (scene) => {
   console.debug("meshData:" , data);
   for(let m of data.meshes) {
     m.scaling = Vector3.One().scale(1);
+    let mat = createMaterial();
+    m.material = mat;
     console.log("mesh:", m);
   }
   return data.meshes[1];
